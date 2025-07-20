@@ -239,6 +239,8 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y install \
+        $(curl https://api.github.com/repos/bazzite-org/cicpoffs/releases/latest | jq -r '.assets[] | select(.name| test(".*rpm$")).browser_download_url') && \
+    dnf5 -y install \
         bazaar \
         iwd \
         twitter-twemoji-fonts \
@@ -308,12 +310,15 @@ RUN --mount=type=cache,dst=/var/cache \
         libvirt \
         lsb_release \
         uupd \
+        ds-inhibit \
         rocm-hip \
         rocm-opencl \
         rocm-clinfo \
         waydroid \
         cage \
         wlr-randr && \
+    curl -Lo /tmp/ls-iommu.tar.gz $(curl https://api.github.com/repos/HikariKnight/ls-iommu/releases/latest | jq -r '.assets[] | select(.name| test(".*x86_64.tar.gz$")).browser_download_url') && \
+    mkdir -p /tmp/ls-iommu && \
     sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.service && \
     setcap 'cap_sys_admin+p' /usr/bin/sunshine-v* && \
     dnf5 -y --setopt=install_weak_deps=False install \
@@ -321,17 +326,13 @@ RUN --mount=type=cache,dst=/var/cache \
         rocm-opencl \
         rocm-clinfo \
         rocm-smi && \
-    dnf5 -y install \
-        $(curl https://api.github.com/repos/bazzite-org/cicpoffs/releases/latest | jq -r '.assets[] | select(.name| test(".*rpm$")).browser_download_url') && \
     mkdir -p /etc/xdg/autostart && \
     sed -i~ -E 's/=.\$\(command -v (nft|ip6?tables-legacy).*/=/g' /usr/lib/waydroid/data/scripts/waydroid-net.sh && \
     sed -i 's/ --xdg-runtime=\\"${XDG_RUNTIME_DIR}\\"//g' /usr/bin/btrfs-assistant-launcher && \
     curl -Lo /usr/bin/installcab https://raw.githubusercontent.com/bazzite-org/steam-proton-mf-wmv/master/installcab.py && \
     chmod +x /usr/bin/installcab && \
-    curl -Lo /usr/bin/install-mf-wmv https://github.com/bazzite-org/steam-proton-mf-wmv/blob/master/install-mf-wmv.sh && \
+    curl -Lo /usr/bin/install-mf-wmv https://raw.githubusercontent.com/bazzite-org/steam-proton-mf-wmv/refs/heads/master/install-mf-wmv.sh && \
     chmod +x /usr/bin/install-mf-wmv && \
-    curl -Lo /tmp/ls-iommu.tar.gz $(curl https://api.github.com/repos/HikariKnight/ls-iommu/releases/latest | jq -r '.assets[] | select(.name| test(".*x86_64.tar.gz$")).browser_download_url') && \
-    mkdir -p /tmp/ls-iommu && \
     tar --no-same-owner --no-same-permissions --no-overwrite-dir -xvzf /tmp/ls-iommu.tar.gz -C /tmp/ls-iommu && \
     rm -f /tmp/ls-iommu.tar.gz && \
     cp -r /tmp/ls-iommu/ls-iommu /usr/bin/ && \
@@ -425,17 +426,6 @@ RUN --mount=type=cache,dst=/var/cache \
             gnome-disk-utility \
             krunner-bazaar \
             ptyxis && \
-        dnf5 -y swap \
-        --repo=terra-extras \
-            kf6-kio kf6-kio && \
-        dnf5 versionlock add \
-            kf6-kio-core \
-            kf6-kio-core-libs \
-            kf6-kio-doc \
-            kf6-kio-file-widgets \
-            kf6-kio-gui \
-            kf6-kio-widgets \
-            kf6-kio-widgets-libs && \
         dnf5 -y remove \
             plasma-welcome \
             plasma-welcome-fedora \
@@ -469,6 +459,7 @@ RUN --mount=type=cache,dst=/var/cache \
         dnf5 -y install \
             nautilus-gsconnect \
             steamdeck-backgrounds \
+            steamdeck-gnome-presets \
             gnome-randr-rust \
             gnome-shell-extension-appindicator \
             gnome-shell-extension-user-theme \
@@ -642,6 +633,7 @@ RUN --mount=type=cache,dst=/var/cache \
     systemctl enable bazzite-hardware-setup.service && \
     systemctl disable tailscaled.service && \
     systemctl enable dev-hugepages1G.mount && \
+    systemctl enable ds-inhibit.service && \
     systemctl --global enable bazzite-user-setup.service && \
     systemctl --global enable podman.socket && \
     systemctl --global enable systemd-tmpfiles-setup.service && \
@@ -713,7 +705,6 @@ RUN --mount=type=cache,dst=/var/cache \
             steamdeck-kde-presets \
     ; else \
         dnf5 -y install \
-            steamdeck-gnome-presets \
             gnome-shell-extension-caribou-blocker \
             sddm && \
         ln -sf /usr/share/wallpapers/convergence.jxl /usr/share/backgrounds/default.jxl && \
@@ -740,7 +731,6 @@ RUN --mount=type=cache,dst=/var/cache \
         adjustor \
         acpica-tools \
         vpower \
-        ds-inhibit \
         steam_notif_daemon \
         sdgyrodsu \
         ibus-pinyin \
@@ -778,12 +768,15 @@ RUN --mount=type=cache,dst=/var/cache \
 
 # Install Gamescope Session & Supporting changes
 # Add bootstrap_steam.tar.gz used by gamescope-session (Thanks GE & Nobara Project!)
+# Add sdl gamecontrollerdb used by handheld daemon for externals
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     mkdir -p /usr/share/gamescope-session-plus/ && \
     curl -Lo /usr/share/gamescope-session-plus/bootstrap_steam.tar.gz https://large-package-sources.nobaraproject.org/bootstrap_steam.tar.gz && \
+    mkdir -p /usr/share/sdl/ && \
+    curl -Lo /usr/share/sdl/gamecontrollerdb.txt https://raw.githubusercontent.com/mdqinc/SDL_GameControllerDB/refs/heads/master/gamecontrollerdb.txt && \
     dnf5 -y install \
     --repo copr:copr.fedorainfracloud.org:bazzite-org:bazzite \
         gamescope-session-plus \
@@ -843,7 +836,6 @@ RUN --mount=type=cache,dst=/var/cache \
     systemctl enable wireplumber-sysconf.service && \
     systemctl enable pipewire-workaround.service && \
     systemctl enable pipewire-sysconf.service && \
-    systemctl enable ds-inhibit.service && \
     systemctl enable cec-onboot.service && \
     systemctl enable cec-onpoweroff.service && \
     systemctl enable cec-onsleep.service && \
@@ -929,7 +921,8 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
-    sed -i 's|^Exec=bazaar window --auto-service$|Exec=env GSK_RENDERER=opengl bazaar window --auto-service|' /usr/share/applications/io.github.kolunmi.Bazaar.desktop && \
+    mv /usr/bin/bazaar /usr/bin/bazaar-hotfix && \
+    mv /usr/bin/bazaar-nvidia /usr/bin/bazaar && \
     echo "import \"/usr/share/ublue-os/just/95-bazzite-nvidia.just\"" >> /usr/share/ublue-os/justfile && \
     if grep -q "silverblue" <<< "${BASE_IMAGE_NAME}"; then \
       mkdir -p "/usr/share/ublue-os/dconfs/nvidia-silverblue/" && \

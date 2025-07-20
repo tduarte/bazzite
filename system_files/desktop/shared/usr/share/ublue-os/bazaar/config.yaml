@@ -43,7 +43,7 @@ sections:
   - title: "Gaming"
     subtitle: "Protocol 3: Protect the Pilot"
     rows: 4
-    banner: file:///usr/share/ublue-os/bazaar/gaming.jxl
+    banner: file:///usr/share/ublue-os/bazaar/gaming.png
     banner-fit: contain
     banner-text-halign: start
     banner-text-valign: center
@@ -59,6 +59,7 @@ sections:
       - io.mrarm.mcpelauncher
       - org.vinegarhq.Sober
       - org.zdoom.GZDoom
+      - org.zdoom.Raze
       - org.openmw.OpenMW
       - dev.goats.xivlauncher
       - net.retrodeck.retrodeck
@@ -80,6 +81,7 @@ sections:
       - io.github.stella_emu.Stella
       - org.scummvm.ScummVM
       - io.github.dosbox-staging
+      - rs.ruffle.Ruffle
       - com.supermodel3.Supermodel
       - com.github.k4zmu2a.spacecadetpinball
       - sh.ppy.osu
@@ -93,7 +95,7 @@ sections:
   - title: "Streaming & Chat"
     subtitle: "Sprunk'd it."
     rows: 3
-    banner: file:///usr/share/ublue-os/bazaar/streaming.jxl
+    banner: file:///usr/share/ublue-os/bazaar/streaming.png
     banner-fit: contain
     banner-text-halign: end
     banner-text-valign: center
@@ -118,7 +120,7 @@ sections:
   - title: "Music & Media"
     subtitle: "Let me break it down for you."
     rows: 2
-    banner: file:///usr/share/ublue-os/bazaar/music.jxl
+    banner: file:///usr/share/ublue-os/bazaar/music.png
     banner-fit: contain
     banner-text-halign: start
     banner-text-valign: center
@@ -136,12 +138,13 @@ sections:
       - com.github.iwalton3.jellyfin-media-player
       - tv.plex.PlexDesktop
       - com.plexamp.Plexamp
+      - rocks.shy.VacuumTube
       - org.strawberrymusicplayer.strawberry
       - camp.nook.nookdesktop
   - title: "Office & Productivity"
     subtitle: "May the paperclip fellow have mercy."
     rows: 2
-    banner: file:///usr/share/ublue-os/bazaar/office.jxl
+    banner: file:///usr/share/ublue-os/bazaar/office.png
     banner-fit: contain
     banner-text-halign: end
     banner-text-valign: center
@@ -167,7 +170,7 @@ sections:
   - title: "Utilities"
     subtitle: "Stuff you didn't need until now."
     rows: 2
-    banner: file:///usr/share/ublue-os/bazaar/utilities.jxl
+    banner: file:///usr/share/ublue-os/bazaar/utilities.png
     banner-fit: contain
     banner-text-halign: start
     banner-text-valign: center
